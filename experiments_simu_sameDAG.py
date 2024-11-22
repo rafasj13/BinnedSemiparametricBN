@@ -20,28 +20,22 @@ def get_nodes_and_parents(key): #return nodes and parents
         return ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'], 1
             
 init,fini, iters = (11,15,15)
-json_DAGS, json_DAGS3, json_DAGS4, json_DAGS5, json_DAGS6, json_DAGS7 = {}, {}, {}, {}, {}, {}
+json_DAGS, json_DAGS2, json_DAGS3, json_DAGS4, json_DAGS5, json_DAGS6, json_DAGS7 = {}, {}, {}, {}, {}, {}, {}
 simu = True
 ntest = 2048
 
 
-for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
-                            # ademas, hay un problema en la discretización, conforme aumento M, el error se dispara
-                            # esto se agraba con el aumento del numero de padres
-
-    for power in range(init,fini):
+for power in range(init,fini):
+    for M in  [100]: 
         n=2**power
         results = []
 
         for simu_key in [1,2,3,4]:
-
-            # if simu_key in [2,4] and M < 100:
-            #     continue
-
             nodes, parents = get_nodes_and_parents(simu_key)
             print(f'\nSample size {n}, Simulated data {simu_key}, Grid size {M}')
             print(get_config(simu_key)['arcs'])
 
+            controller2 = ExperimentsController(json_DAGS2, nodes, iters) # ground truth
 
             controller = ExperimentsController(json_DAGS, nodes, iters) # bsbn simple
             controller6 = ExperimentsController(json_DAGS6, nodes, iters) # bsbn linear
@@ -66,6 +60,12 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
                     logl_ref = model_ref.logl(testdat)
                     end = time.time()
                     test_time_ref = end - start
+
+                    controller2.prepare_dags(model_ref, model_ref)
+                    controller2.append(i, times = {'train_new': -1, 'test_new': test_time_ref, 
+                                                'train_ref': -1, 'test_ref': test_time_ref}, 
+                                        logl = {'new': logl_ref, 'ref': logl_ref})    
+                    
                 except Exception as e:
                     print(f"Exception occurred: {e} in REF")
                     continue
@@ -80,6 +80,7 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
                                         logl = {'new': logl_bsbn, 'ref': logl_ref})
                 except Exception as e:
                     print(f"Exception occurred: {e} in BSBN")
+                    controller2.pop()
                     continue
                 
                 
@@ -93,6 +94,7 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
                                         logl = {'new': logl_bsbn_linear, 'ref': logl_ref})
                 except Exception as e:
                     print(f"Exception occurred: {e} in BSBN-Linear")
+                    controller2.pop()
                     controller.pop()
                     continue
                 
@@ -107,6 +109,7 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
                                             logl = {'new': logl_bsbn_fft, 'ref': logl_ref})
                     except Exception as e:
                         print(f"Exception occurred: {e} in BSBN-FFT")
+                        controller2.pop()
                         controller.pop()
                         controller6.pop()
                         continue
@@ -124,6 +127,7 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
                                             logl = {'new': logl_bsbn_fft_linear, 'ref': logl_ref})
                     except Exception as e:
                         print(f"Exception occurred: {e} in BSBN-FFT-Linear")
+                        controller2.pop()
                         controller.pop()
                         controller6.pop()
                         controller3.pop()
@@ -145,6 +149,7 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
                                             logl = {'new': logl_bsbn_fft_skde, 'ref': logl_ref})
                     except Exception as e:
                         print(f"Exception occurred: {e} in BSBN-FFT-SKDE")
+                        controller2.pop()
                         controller.pop()
                         controller6.pop()
                         continue
@@ -161,6 +166,7 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
                                             logl = {'new': logl_bsbn_fft_skde_linear, 'ref': logl_ref})
                     except Exception as e:
                         print(f"Exception occurred: {e} in BSBN-FFT-SKDE-Linear")
+                        controller2.pop()
                         controller.pop()
                         controller6.pop()
                         controller4.pop()
@@ -168,7 +174,9 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
                 
                 i+=1
 
-            
+            # Saving results
+            json_DAGS2 = controller2.jsonify(n, f'simu{simu_key}', 'Ground Truth', 'REF')
+
             json_DAGS = controller.jsonify(n, f'simu{simu_key}', 'BSBN', 'REF')
             json_DAGS6 = controller6.jsonify(n, f'simu{simu_key}', 'BSBN-Linear', 'REF')
 
@@ -181,6 +189,7 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
 
             # Creating DataFrames and calculating the mean grouped by 'model'
             res = pd.DataFrame(json_DAGS[n][f'simu{simu_key}']['dataframe'], index=range(iters)).groupby('model').mean().round(4)
+            res2 = pd.DataFrame(json_DAGS2[n][f'simu{simu_key}']['dataframe'], index=range(iters)).groupby('model').mean().round(4)
             res3 = pd.DataFrame(json_DAGS3[n][f'simu{simu_key}']['dataframe'], index=range(iters)).groupby('model').mean().round(4)
             res4 = pd.DataFrame(json_DAGS4[n][f'simu{simu_key}']['dataframe'], index=range(iters)).groupby('model').mean().round(4)
             res5 = pd.DataFrame(json_DAGS5[n][f'simu{simu_key}']['dataframe'], index=range(iters)).groupby('model').mean().round(4)
@@ -188,39 +197,53 @@ for M in  [30, 50, 80]: # el algoritmo rompe en fft por sabe dios que
             res7 = pd.DataFrame(json_DAGS7[n][f'simu{simu_key}']['dataframe'], index=range(iters)).groupby('model').mean().round(4)
 
             
-            all_res = pd.concat([res, res6, res4, res7, res3, res5])
+            all_res = pd.concat([res2, res, res6, res4, res7, res3, res5])
             # Print mean results
             print(all_res)
             
-            svpath = f'results/exp_simu8/Mfix_sameDAG/{M}'
+            svpath = f'results/exp_simu8/Mfix_sameDAG'
             if not os.path.exists(svpath):
                 os.makedirs(svpath)
 
 
+            all_results = {'1.Ground Truth': json_DAGS2, 
+                           '2.BSBN': json_DAGS,  '3.BSBN-Linear': json_DAGS6,  
+                           '4.BSBN-FFT-SKDE': json_DAGS4,  '5.BSBN-FFT-SKDE-Linear': json_DAGS7,
+                           '6.BSBN-FFT': json_DAGS3, '7.BSBN-FFT-Linear': json_DAGS5}
+            
 
-            with open(svpath +'/simu_bsbn.json', 'w') as json_file:
-                json.dump(json_DAGS, json_file)
+            with open(svpath +f'/simu_all_{M}.json', 'w') as json_file:
+                json.dump(all_results, json_file)
 
-            with open(svpath +'/simu_bsbn_linear.json', 'w') as json_file:
-                json.dump(json_DAGS6, json_file)
+
+            # with open(svpath +f'/{M}/simu_spbn.json', 'w') as json_file:
+            #     json.dump(json_DAGS2, json_file)
+
+
+
+            # with open(svpath +f'/{M}/simu_bsbn.json', 'w') as json_file:
+            #     json.dump(json_DAGS, json_file)
+
+            # with open(svpath +f'/{M}/simu_bsbn_linear.json', 'w') as json_file:
+            #     json.dump(json_DAGS6, json_file)
         
 
 
 
-            with open(svpath +'/simu_bsbn_fft_skde.json', 'w') as json_file:
-                json.dump(json_DAGS4, json_file)
+            # with open(svpath +f'/{M}/simu_bsbn_fft_skde.json', 'w') as json_file:
+            #     json.dump(json_DAGS4, json_file)
 
-            with open(svpath +'/simu_bsbn_fft_skde_linear.json', 'w') as json_file:
-                json.dump(json_DAGS7, json_file)
-
-
+            # with open(svpath +f'/{M}/simu_bsbn_fft_skde_linear.json', 'w') as json_file:
+            #     json.dump(json_DAGS7, json_file)
 
 
-            with open(svpath +'/simu_bsbn_fft.json', 'w') as json_file:
-                json.dump(json_DAGS3, json_file)
 
-            with open(svpath +'/simu_bsbn_fft_linear.json', 'w') as json_file:
-                json.dump(json_DAGS5, json_file)
+
+            # with open(svpath +f'/{M}/simu_bsbn_fft.json', 'w') as json_file:
+            #     json.dump(json_DAGS3, json_file)
+
+            # with open(svpath +f'/{M}/simu_bsbn_fft_linear.json', 'w') as json_file:
+            #     json.dump(json_DAGS5, json_file)
 
 
 

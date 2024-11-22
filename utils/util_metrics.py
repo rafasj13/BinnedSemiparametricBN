@@ -1,6 +1,6 @@
 import numpy as np
 import pybnesian as pbn
-from util_syntethic import *
+from .util_syntethic import *
 import time
 
 
@@ -134,16 +134,15 @@ class ExperimentsController:
         
         hc = pbn.GreedyHillClimbing()
         if 'BSBN' in model_key:
-            M, linear, FFT = kwargs['M'], kwargs['linear'], kwargs['FFT']
             start_model = pbn.FourierNetwork(nodes=nodes)
 
             start = time.time()
             model = hc.estimate(pool, score, start_model, patience = patience, max_indegree=max_indegree)
             end = time.time()
             train_time = end - start
-            model.fit(traindat, grid= M, linear = linear, use_fft=FFT)    
+            model.fit(traindat, **kwargs)    
         
-        elif model_key == 'SPBN':
+        elif "SPBN" in model_key:
             start_model = pbn.SemiparametricBN(nodes=nodes)
 
             start = time.time()
@@ -162,11 +161,10 @@ class ExperimentsController:
 
     @staticmethod
     def get_bsbn_ref(simu_key, traindat, testdat, **kwargs):
-        M, linear, FFT = kwargs['M'], kwargs['linear'], kwargs['FFT']
 
         config = ExperimentsController.map_ckde_to_fbkernel(get_config(simu_key))
         model = pbn.FourierNetwork(**config)
-        model.fit(traindat, grid= M, linear = linear, use_fft=FFT)
+        model.fit(traindat, **kwargs)
 
         start = time.time()
         logl_model = model.logl(testdat)
