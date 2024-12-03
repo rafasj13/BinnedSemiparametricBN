@@ -110,17 +110,17 @@ def generate_synthetic1(size, seed = 0):
   datarray = np.zeros(shape=(size,7))
   for row in range(size):
     
-    a = np.random.normal(3, 2)
+    a = np.random.normal(3, 1.5)
 
-    b = np.random.normal(a*1.5-5, 1.5)
+    b = np.random.normal(a*0.5, 1.5)
     # b = sample_mixture([0.5, 0.5], [a-5, 0], np.array([1.5, 1])**2, 1)[0]
     c = sample_mixture([0.45, 0.55], [a*0.5, 5], np.array([1.5, 1])**2, 1)[0]
     # d = np.random.normal(b*0.3+c, 1)
     d = sample_mixture([0.5, 0.5], [c*b*0.5, 3.5], np.array([1, 1])**2, 1)[0]
     # sample_mixture([0.3, 0.7], [a-c, a*0.3+c], np.array([1, 0.5])**2, 1)[0] 
     e = sample_mixture([0.5, 0.5], [d+c, 2], np.array([1, 1])**2, 1)[0]  
-    f = sample_mixture([0.7, 0.3], [e+d+a, 0.3], np.array([0.5, 1])**2, 1)[0]
-    g = np.random.normal(c*0.3, 1)
+    f = sample_mixture([0.5, 0.5], [e+d, 0.7*a], np.array([1, 0.5])**2, 1)[0]
+    g = np.random.normal(c*0.3, 1.5)
 
     datarray[row] = [a,b,c,d,e,f,g]
 
