@@ -64,29 +64,6 @@ config_synthetic4 = dict(
             ('M', pbn.CKDEType()), ('N', pbn.CKDEType()), ('O', pbn.CKDEType())])
 
 
-config_synthetic5 = dict(
-    arcs=[
-        ('A', 'B'), ('A', 'C'), ('A', 'D'), ('A','T'),
-        ('B', 'G'), 
-        ('C', 'F'), ('C', 'E'),
-        ('D', 'H'), ('D', 'R'), ('D', 'S'), 
-        ('F','K'),
-        ('I', 'M'),  # E and F have 1 child each
-        ('M', 'N'), ('M', 'O'), 
-        ('H', 'I'), ('E', 'J'),
-        ('R', 'P'), 
-        ('K', 'Q'), ('K','L')
-    ],
-    node_types= [('A', pbn.CKDEType()), ('B', pbn.LinearGaussianCPDType()), ('C', pbn.LinearGaussianCPDType()), ('D', pbn.LinearGaussianCPDType()),
-                  ('E', pbn.LinearGaussianCPDType()), ('F', pbn.CKDEType()), ('G', pbn.CKDEType()), ('H', pbn.LinearGaussianCPDType()),
-                  ('I', pbn.CKDEType()), ('J', pbn.CKDEType()), ('K', pbn.CKDEType()), ('L', pbn.LinearGaussianCPDType()),
-                  ('M', pbn.LinearGaussianCPDType()), ('N', pbn.LinearGaussianCPDType()), ('O', pbn.CKDEType()), ('P', pbn.CKDEType()),
-                  ('Q', pbn.CKDEType()), ('R', pbn.CKDEType()), ('S', pbn.CKDEType()), ('T', pbn.CKDEType())])
-
-
-
-
-
 def sample_mixture(prior_prob, means, variances, n_instances,):
 
     p = np.asarray(prior_prob)
@@ -110,9 +87,9 @@ def generate_synthetic1(size, seed = 0):
   datarray = np.zeros(shape=(size,7))
   for row in range(size):
     
-    a = np.random.normal(3, 1.5)
+    a = np.random.normal(3, 2)
 
-    b = np.random.normal(a*0.5, 1.5)
+    b = np.random.normal(a*0.5, 2)
     # b = sample_mixture([0.5, 0.5], [a-5, 0], np.array([1.5, 1])**2, 1)[0]
     c = sample_mixture([0.45, 0.55], [a*0.5, 5], np.array([1.5, 1])**2, 1)[0]
     # d = np.random.normal(b*0.3+c, 1)
@@ -120,7 +97,7 @@ def generate_synthetic1(size, seed = 0):
     # sample_mixture([0.3, 0.7], [a-c, a*0.3+c], np.array([1, 0.5])**2, 1)[0] 
     e = sample_mixture([0.5, 0.5], [d+c, 2], np.array([1, 1])**2, 1)[0]  
     f = sample_mixture([0.5, 0.5], [e+d, 0.7*a], np.array([1, 0.5])**2, 1)[0]
-    g = np.random.normal(c*0.3, 1.5)
+    g = np.random.normal(c*0.3, 2)
 
     datarray[row] = [a,b,c,d,e,f,g]
 
@@ -184,20 +161,20 @@ def generate_synthetic4(size, seed=0):
     
     for row in range(size):
         # Generate data for each variable based on its dependencies
-        a = np.random.normal(5, 1.5)
-        b = np.random.normal(a * 0.6, 1.8)
-        c = sample_mixture([0.4, 0.6], [a + 2, -1], np.array([2, 1.2])**2, 1)[0]
+        a = np.random.normal(5, 2)
+        b = np.random.normal(a + 2, 1.5)
+        c = sample_mixture([0.4, 0.6], [a + 2, 1], np.array([1, 1.5])**2, 1)[0]
         
-        d = sample_mixture([0.3, 0.7], [b * 0.8, 15], np.array([1.3, 1.7])**2, 1)[0]
-        e = np.random.normal(c * 1.5, 2.0)
-        f = sample_mixture([0.5, 0.5], [c * 1.2, -3], np.array([1.6, 0.9])**2, 1)[0]
+        d = sample_mixture([0.5, 0.5], [b * 0.8, 15], np.array([1.5, 1.5])**2, 1)[0]
+        e = np.random.normal(c * 0.7, 2.0)
+        f = sample_mixture([0.5, 0.5], [c * 1.2, -3], np.array([1.5, 1])**2, 1)[0]
         
-        g = sample_mixture([0.6, 0.4], [d * 0.5 + 3, 8], np.array([1, 1.2])**2, 1)[0]
-        h = np.random.normal(d * 1.2, 2.5)
-        k = np.random.normal(d * 1.7, 2)
+        g = sample_mixture([0.6, 0.4], [d + 4, 8], np.array([1, 1.5])**2, 1)[0]
+        h = np.random.normal(d * 0.4, 2)
+        k = np.random.normal(d * 0.5, 2.5)
         
         i = sample_mixture([0.55, 0.45], [e * 1.3, 0], np.array([2, 1])**2, 1)[0]
-        j = np.random.normal(e * 0.7, 1.8)
+        j = np.random.normal(e * 0.5, 2)
         
         o = sample_mixture([0.3, 0.7], [f + 1, -2], np.array([1.4, 0.7])**2, 1)[0]
         
@@ -235,7 +212,5 @@ def get_config(key):
         return config_synthetic3
     elif key==4:
         return config_synthetic4
-    elif key==5:
-        return config_synthetic5
     else:
         print('Not valid key')

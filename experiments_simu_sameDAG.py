@@ -19,7 +19,7 @@ def get_nodes_and_parents(key): #return nodes and parents
         return ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'], 1
             
 
-init, fini, iters = (11, 15, 15)
+init, fini, iters = (11, 15, 1)
 simu = True
 ntest = 2048
 jsondags = {}
@@ -31,13 +31,13 @@ controller_config = {
     '3.BSBN-Linear': {'controller': {}, 'key': 'BSBN-Linear', 'args': {'linear': True, 'use_fft': False}},
     '4.BSBN-FKDE': {'controller': {}, 'key': 'BSBN-FFT', 'args': {'linear': False, 'use_fft': True}},
     '5.BSBN-FKDE-Linear': {'controller': {}, 'key': 'BSBN-FFT-Linear', 'args': {'linear': True, 'use_fft': True}},
-    '6.BSBN-FKDE-SBK': {'controller': {}, 'key': 'BSBN-FFT-SKDE', 'args': {'linear': False, 'use_fft': True}},
-    '7.BSBN-FKDE-SBK-Linear': {'controller': {}, 'key': 'BSBN-FFT-SKDE-Linear', 'args': {'linear': True, 'use_fft': True}},
+    # '6.BSBN-FKDE-SBK': {'controller': {}, 'key': 'BSBN-FFT-SKDE', 'args': {'linear': False, 'use_fft': True}},
+    # '7.BSBN-FKDE-SBK-Linear': {'controller': {}, 'key': 'BSBN-FFT-SKDE-Linear', 'args': {'linear': True, 'use_fft': True}},
 }
-configex = ([[50,80,100]], [[3,4]], [11]) # M, simu_key, power
 
-for kexp, (grids, simulations, new_init) in enumerate(zip(*configex)):
-    for power in range(new_init, fini):
+configex = ([[50,80,100,125]], [[1,2,3,4]], [[11,12,13,14]], ['sameDAG']) # M, simu_key, power, name
+for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
+    for power in powers:
         for M in grids:
             n = 2**power
             results = []
@@ -58,7 +58,7 @@ for kexp, (grids, simulations, new_init) in enumerate(zip(*configex)):
                 while i < iters:
                     
                     traindat, testdat, pool = controller_config['1.SPBN']['controller'][M].set_up(
-                        n, ntest, simulate={'bool': simu, 'key': simu_key}, seeds=(i, 255 + i)
+                        n, ntest, simulate={'bool': simu, 'key': simu_key}, seeds=(0, 255)
                     )
                     print(i, '->', traindat.shape, testdat.shape)
 
@@ -119,8 +119,10 @@ for kexp, (grids, simulations, new_init) in enumerate(zip(*configex)):
                     for config in controller_config.values()])
                 print(all_res)
 
-                svpath = f'results/exp_simu/Mfix_sameDAG{kexp+3}'
-                os.makedirs(svpath, exist_ok=True)
+                
+                svpath = f'results/exp_simu2'
+                ndirs = len(os.listdir(svpath))+1
+                os.makedirs(svpath+f'/{ndirs}Mfix_{name}', exist_ok=True)
 
                 all_results = {key: config['controller'][M] for key,config in controller_config.items()}
                 with open(f'{svpath}/simu_all_{M}.json', 'w') as json_file:

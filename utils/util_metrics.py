@@ -34,7 +34,13 @@ class ExperimentsController:
         
         if not simulate['bool']:
             train = self.data.sample(ntrain, random_state=seeds[0])
-            test = self.data.drop(train.index).sample(ntest, random_state=seeds[1])
+            if (self.data.shape[0]-ntrain) < ntest:
+                ntest2 = ntest - (self.data.shape[0]-ntrain)
+                test1 = self.data.drop(train.index)
+                test2 = train.sample(ntest2, random_state=seeds[1])
+                test = pd.concat([test1,test2])
+            else:
+                test = self.data.drop(train.index).sample(ntest, random_state=seeds[1])
         else:
             self.simulate = simulate['bool']
             train = generate_data(simulate['key'],ntrain, seed=seeds[0])
@@ -43,9 +49,7 @@ class ExperimentsController:
             config = get_config(simulate['key'])
             self.ref_model = pbn.SemiparametricBN(nodes = self.nodes, **config)
 
-        pool = pbn.OperatorPool([pbn.ArcOperatorSet(), pbn.ChangeNodeTypeSet()])
-    
-        return train, test, pool
+        return train, test
     
     def get_simulate_ref(self):
         if self.simulate:
@@ -130,23 +134,33 @@ class ExperimentsController:
     
 
     @staticmethod
-    def train_model(model_key, traindat, testdat, pool, score, nodes, patience, max_indegree, **kwargs):
+    def train_model(model_key, traindat, testdat, pool, score, nodes, patience, hc_config:dict, **kwargs):
         
         hc = pbn.GreedyHillClimbing()
+
         if 'BSBN' in model_key:
-            start_model = pbn.FourierNetwork(nodes=nodes)
+            start_model = pbn.BinnedSPBN(nodes=nodes)
 
             start = time.time()
-            model = hc.estimate(pool, score, start_model, patience = patience, max_indegree=max_indegree)
+            model = hc.estimate(pool, score, start_model, patience = patience, **hc_config)
             end = time.time()
             train_time = end - start
-            model.fit(traindat, **kwargs)    
+            model.fit(traindat, **kwargs['args'])    
         
         elif "SPBN" in model_key:
             start_model = pbn.SemiparametricBN(nodes=nodes)
 
             start = time.time()
-            model = hc.estimate(pool, score, start_model, patience = patience, max_indegree=max_indegree)
+            model = hc.estimate(pool, score, start_model, patience = patience, **hc_config)
+            end = time.time()
+            train_time = end - start
+            model.fit(traindat)
+            
+        elif 'GBN' in model_key:
+            start_model = pbn.GaussianNetwork(nodes=nodes)
+
+            start = time.time()
+            model = hc.estimate(pool, score, start_model, patience = patience, **hc_config)
             end = time.time()
             train_time = end - start
             model.fit(traindat)
@@ -163,7 +177,7 @@ class ExperimentsController:
     def get_bsbn_ref(simu_key, traindat, testdat, **kwargs):
 
         config = ExperimentsController.map_ckde_to_fbkernel(get_config(simu_key))
-        model = pbn.FourierNetwork(**config)
+        model = pbn.BinnedSPBN(**config)
         model.fit(traindat, **kwargs)
 
         start = time.time()
@@ -349,18 +363,19 @@ def structural_hamming_distance(arcs1, arcs2):
         if arc2 not in arcs_set1 and (arc2[1], arc2[0]) not in arcs_set1:
             hamming_dist += 1 # addition arc
 
-
     return hamming_dist
 
-def node_type_hamming_distance(node_types1, node_types2):
+
+def node_type_hamming_distance(node_types, node_types_ref):
     distance = 0
-    for k,v in node_types1.items():
-        if v != node_types2[k]:
-            if node_types2[k]!=pbn.CKDEType():
-                distance += 1
 
+    for k,v in node_types.items():
+        if v != node_types_ref[k]:
+            if v==pbn.FBKernelType() and node_types_ref[k]==pbn.CKDEType():
+                continue
+            distance += 1
+    
     return distance
-
 
 def arcs_to_DAG(arcs, node_map):
     """
