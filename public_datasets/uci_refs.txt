@@ -1,0 +1,56 @@
+UCI
+https://archive.ics.uci.edu/datasets?FeatureTypes=Numerical&Python=true&skip=0&take=10&sort=desc&orderBy=NumHits&search=&NumInstances=15481&NumInstances=63000000
+
+5 Appliance Energy Prediction
+@article{5_appliance_energy_predicion,
+  title={Data driven prediction models of energy use of appliances in a low-energy house},
+  author={Luis M. Ibarra Candanedo and Veronique Feldheim and Dominique Deramaix},
+  journal={Energy and Buildings},
+  year={2017},
+  volume={140},
+  pages={81-97},
+  url={https://api.semanticscholar.org/CorpusID:63814994}
+}
+
+2 HTRU2
+@article{2_htru2,
+  title={Fifty years of pulsar candidate selection: from simple filters to a new principled real-time classification approach},
+  author={Robert J. Lyon and Ben W. Stappers and Sally Cooper and J. M. Brooke and Joshua D. Knowles},
+  journal={Monthly Notices of the Royal Astronomical Society},
+  year={2016},
+  volume={459},
+  pages={1104-1123},
+  url={https://api.semanticscholar.org/CorpusID:56261429}
+}
+
+3 Individual Household Electric Power Consumption
+@misc{individual_household_electric_power_consumption_235,
+  author       = {Hebrail, Georges and Berard, Alice},
+  title        = {{Individual Household Electric Power Consumption}},
+  year         = {2006},
+  howpublished = {UCI Machine Learning Repository},
+  note         = {{DOI}: https://doi.org/10.24432/C58K54}
+}
+
+4 Magic Gamma Telescope
+@misc{4_magic_gamma_telescope,
+  author       = {Bock, R.},
+  title        = {{MAGIC Gamma Telescope}},
+  year         = {2004},
+  howpublished = {UCI Machine Learning Repository},
+  note         = {{DOI}: https://doi.org/10.24432/C52C8B}
+}
+
+
+1 Single Elder Home Monitoring Gas and Position
+@article{1_single_elder,
+title = {Home monitoring for older singles: A gas sensor array system},
+journal = {Sensors and Actuators B: Chemical},
+volume = {393},
+pages = {134036},
+year = {2023},
+issn = {0925-4005},
+doi = {https://doi.org/10.1016/j.snb.2023.134036},
+url = {https://www.sciencedirect.com/science/article/pii/S0925400523007517},
+author = {Daniel Marín and Joshua Llano-Viles and Zouhair Haddi and Alexandre Perera-Lluna and Jordi Fonollosa},
+}
