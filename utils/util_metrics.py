@@ -138,7 +138,7 @@ class ExperimentsController:
         
         hc = pbn.GreedyHillClimbing()
 
-        if 'BSBN' in model_key:
+        if model_key[2:8] == 'B-SPBN':
             start_model = pbn.BinnedSPBN(nodes=nodes)
 
             start = time.time()
@@ -147,7 +147,7 @@ class ExperimentsController:
             train_time = end - start
             model.fit(traindat, **kwargs['args'])    
         
-        elif "SPBN" in model_key:
+        elif model_key[2:] == "SPBN":
             start_model = pbn.SemiparametricBN(nodes=nodes)
 
             start = time.time()
@@ -174,7 +174,7 @@ class ExperimentsController:
     
 
     @staticmethod
-    def get_bsbn_ref(simu_key, traindat, testdat, **kwargs):
+    def get_BSPBN_ref(simu_key, traindat, testdat, **kwargs):
 
         config = ExperimentsController.map_ckde_to_fbkernel(get_config(simu_key))
         model = pbn.BinnedSPBN(**config)
@@ -226,7 +226,7 @@ class ExperimentsReader:
 
         nodes_df = nodes_df.groupby('node').mean().reset_index()
         
-        if 'BSBN' in KEY:
+        if  KEY[2:8] == 'B-SPBN':
             for idx, row in nodes_df.iterrows():
                 if 2 - row['type']  >  row['type']:
                     nodes_df.iloc[idx,1] = 0

@@ -19,14 +19,13 @@ jsondags = {}
 # Define all controller configurations and their labels
 controller_config = {
     '1.SPBN': {'controller': {}, 'key': 'SPBN', 'args': {'linear': False, 'use_fft': False}},
-    '2.BSBN': {'controller': {}, 'key': 'BSBN', 'args': {'linear': False, 'use_fft': False}},
-    # '3.BSBN-Linear': {'controller': {}, 'key': 'BSBN-Linear', 'args': {'linear': True, 'use_fft': False}},
-    '4.BSBN-FKDE': {'controller': {}, 'key': 'BSBN-FKDE', 'args': {'linear': False, 'use_fft': True}},
+    '2.B-SPBN-Simple': {'controller': {}, 'key': 'B-SPBN-Simple', 'args': {'linear': False, 'use_fft': False}},
+    # '3.B-SPBN-Linear': {'controller': {}, 'key': 'B-SPBN-Linear', 'args': {'linear': True, 'use_fft': False}},
+    '4.B-SPBN-FKDE-Simple': {'controller': {}, 'key': 'B-SPBN-FKDE-Simple', 'args': {'linear': False, 'use_fft': True}},
     '5.GBN-BIC': {'controller': {}, 'key': 'GBN-BIC', 'args': {'linear': False, 'use_fft': False}},
     '6.GBN-BGe': {'controller': {}, 'key': 'GBN-BGe', 'args': {'linear': False, 'use_fft': False}},
-    # '5.BSBN-FKDE-Linear': {'controller': {}, 'key': 'BSBN-FKDE-Linear', 'args': {'linear': True, 'use_fft': True}},
-    # '6.BSBN-FKDE-SBK': {'controller': {}, 'key': 'BSBN-FKDE-SBK', 'args': {'linear': False, 'use_fft': True}},
-    # '7.BSBN-FKDE-SBK-Linear': {'controller': {}, 'key': 'BSBN-FKDE-SBK-Linear', 'args': {'linear': True, 'use_fft': True}},
+    # '7.B-SPBN-FKDE-Linear': {'controller': {}, 'key': 'B-SPBN-FKDE-Linear', 'args': {'linear': True, 'use_fft': True}},
+
 }
 
 modelkey = '1.SPBN'
@@ -79,53 +78,45 @@ for (grids, paths, powers, name) in zip(*configex):
 
                     # Iterate through configurations
                     for nc,(key, config) in enumerate(controller_config.items()):
-                        # try:
-                            configcp = config.copy()
-                            configcp['args']['grid'] = M
-                            if "SPBN" in key:
-                                
-                                config['controller'][M].prepare_dags(model_ref, model_ref)
-                                config['controller'][M].append(
-                                i, times={'train_new': train_time_ref, 'test_new': test_time_ref, 'train_ref': train_time_ref, 'test_ref': test_time_ref},
-                                   logl={'new': logl_ref, 'ref': logl_ref} )
-
-                                exceptbool = False
-                                continue
-                            if key[0] in ["4"]:
-                                if parents is None or parents > 1:
-                                    print('here')
-                                    config['controller'][M].append(i)
-                                    continue
-                                else:
-                                    vl = pbn.ValidatedLikelihoodFT(traindat, k=kcv, **configcp['args'])
-                                    pool = pbn.OperatorPool([pbn.ArcOperatorSet(), pbn.ChangeNodeTypeSet()])
-                            elif key[0] in ["5"]:
-                                vl = pbn.BIC(traindat)
-                                pool = pbn.OperatorPool([pbn.ArcOperatorSet()])
-                            elif key[0] in ["6"]:
-                                vl = pbn.BGe(traindat)
-                                pool = pbn.OperatorPool([pbn.ArcOperatorSet()])
-                            elif key[0] in ["2"]:
-                                vl = pbn.ValidatedLikelihoodFT(traindat, k=kcv, **configcp['args'])
-                                pool = pbn.OperatorPool([pbn.ArcOperatorSet(), pbn.ChangeNodeTypeSet()])
-                                
-                            model, train_time, test_time, logl = ExperimentsController.train_model(
-                            key, traindat, testdat, pool, vl, nodes, patience, hc_config, **configcp)
-
-                            config['controller'][M].prepare_dags(model, model_ref)
+                        
+                        configcp = config.copy()
+                        configcp['args']['grid'] = M
+                        if key[2:] == "SPBN":
+                            
+                            config['controller'][M].prepare_dags(model_ref, model_ref)
                             config['controller'][M].append(
-                            i, times={'train_new': train_time, 'test_new': test_time, 'train_ref': train_time_ref, 'test_ref': test_time_ref},
-                                logl={'new': logl, 'ref': logl_ref})
+                            i, times={'train_new': train_time_ref, 'test_new': test_time_ref, 'train_ref': train_time_ref, 'test_ref': test_time_ref},
+                                logl={'new': logl_ref, 'ref': logl_ref} )
 
                             exceptbool = False
-                        # except Exception as e:
-                        #     print(f'Exception in {key}: {e}')
-                        #     for j in range(nc):
-                        #         controlist = list(controller_config.keys())
-                        #         controller_config[controlist[j]]['controller'][M].pop()
+                            continue
+                        if key[0] in ["4","7"]:
+                            if parents is None or parents > 1:
+                                config['controller'][M].append(i)
+                                continue
+                            else:
+                                vl = pbn.ValidatedLikelihoodFT(traindat, k=kcv, **configcp['args'])
+                                pool = pbn.OperatorPool([pbn.ArcOperatorSet(), pbn.ChangeNodeTypeSet()])
+                        elif key[0] in ["5"]:
+                            vl = pbn.BIC(traindat)
+                            pool = pbn.OperatorPool([pbn.ArcOperatorSet()])
+                        elif key[0] in ["6"]:
+                            vl = pbn.BGe(traindat)
+                            pool = pbn.OperatorPool([pbn.ArcOperatorSet()])
+                        elif key[0] in ["2","3"]:
+                            vl = pbn.ValidatedLikelihoodFT(traindat, k=kcv, **configcp['args'])
+                            pool = pbn.OperatorPool([pbn.ArcOperatorSet(), pbn.ChangeNodeTypeSet()])
+                            
+                        model, train_time, test_time, logl = ExperimentsController.train_model(
+                        key, traindat, testdat, pool, vl, nodes, patience, hc_config, **configcp)
 
-                        #     exceptbool = True
-                        #     break
+                        config['controller'][M].prepare_dags(model, model_ref)
+                        config['controller'][M].append(
+                        i, times={'train_new': train_time, 'test_new': test_time, 'train_ref': train_time_ref, 'test_ref': test_time_ref},
+                            logl={'new': logl, 'ref': logl_ref})
+
+                        exceptbool = False
+             
 
                     i = i+1 if not exceptbool else i
 

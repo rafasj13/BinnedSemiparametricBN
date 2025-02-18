@@ -28,12 +28,10 @@ jsondags = {}
 # Define all controller configurations and their labels
 controller_config = {
     '1.SPBN': {'controller': {}, 'key': 'SPBN', 'args': {'linear': False, 'use_fft': False}},
-    '2.BSBN': {'controller': {}, 'key': 'BSBN', 'args': {'linear': False, 'use_fft': False}},
-    '3.BSBN-Linear': {'controller': {}, 'key': 'BSBN-Linear', 'args': {'linear': True, 'use_fft': False}},
-    '4.BSBN-FKDE': {'controller': {}, 'key': 'BSBN-FKDE', 'args': {'linear': False, 'use_fft': True}},
-    '5.BSBN-FKDE-Linear': {'controller': {}, 'key': 'BSBN-FKDE-Linear', 'args': {'linear': True, 'use_fft': True}},
-    # '6.BSBN-FKDE-SBK': {'controller': {}, 'key': 'BSBN-FKDE-SBK', 'args': {'linear': False, 'use_fft': True}},
-    # '7.BSBN-FKDE-SBK-Linear': {'controller': {}, 'key': 'BSBN-FKDE-SBK-Linear', 'args': {'linear': True, 'use_fft': True}},
+    '2.B-SPBN-Simple': {'controller': {}, 'key': 'B-SPBN-Simple', 'args': {'linear': False, 'use_fft': False}},
+    '3.B-SPBN-Linear': {'controller': {}, 'key': 'B-SPBN-Linear', 'args': {'linear': True, 'use_fft': False}},
+    '4.B-SPBN-FKDE-Simple': {'controller': {}, 'key': 'B-SPBN-FKDE-Simple', 'args': {'linear': False, 'use_fft': True}},
+    '5.B-SPBN-FKDE-Linear': {'controller': {}, 'key': 'B-SPBN-FKDE-Linear', 'args': {'linear': True, 'use_fft': True}},
 }
 
 modelkey = '1.SPBN'
@@ -78,12 +76,9 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                         try:
                             configcp = config.copy()
                             configcp['args']['grid'] = M
-                            if "SPBN" in key:
+                            if key[2:] =="SPBN":
                                 vl = pbn.ValidatedLikelihood(traindat, k=kcv)
                             elif key[0] in ["4", "5"] and simu_key not in [3, 4]:
-                                    config['controller'][M].append(i)
-                                    continue
-                            elif key[0] in ["6", "7"]  and simu_key in [3, 4]:
                                     config['controller'][M].append(i)
                                     continue
                             else:

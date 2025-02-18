@@ -12,7 +12,7 @@ test.res
 average.ranking <- colMeans(rankMatrix(data, decreasing=TRUE))
 average.ranking
 drawAlgorithmGraph(pvalue.matrix = test.res$corrected.pval, mean.value = average.ranking)
-?rankMatrix()
+
 
 
 test.res.df <- as.data.frame(test.res$corrected.pval)

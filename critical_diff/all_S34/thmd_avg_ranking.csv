@@ -1,6 +1,6 @@
 "","average.ranking"
-"X1.SPBN",2.34375
-"X2.BSBN",2.15625
-"X3.BSBN.Linear",2.25
-"X4.BSBN.FKDE",3.90625
-"X5.BSBN.FKDE.Linear",4.34375
+"B.SPBN.FKDE.Linear",4.359375
+"B.SPBN.FKDE.Simple",3.890625
+"B.SPBN.Linear",2.25
+"B.SPBN.Simple",2.15625
+"SPBN",2.34375

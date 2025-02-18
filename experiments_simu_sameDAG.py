@@ -27,12 +27,10 @@ jsondags = {}
 # Define all controller configurations and their labels
 controller_config = {
     '1.SPBN': {'controller': {}, 'key': 'SPBN', 'args': {'linear': False, 'use_fft': False}},
-    '2.BSBN': {'controller': {}, 'key': 'BSBN', 'args': {'linear': False, 'use_fft': False}},
-    '3.BSBN-Linear': {'controller': {}, 'key': 'BSBN-Linear', 'args': {'linear': True, 'use_fft': False}},
-    '4.BSBN-FKDE': {'controller': {}, 'key': 'BSBN-FFT', 'args': {'linear': False, 'use_fft': True}},
-    '5.BSBN-FKDE-Linear': {'controller': {}, 'key': 'BSBN-FFT-Linear', 'args': {'linear': True, 'use_fft': True}},
-    # '6.BSBN-FKDE-SBK': {'controller': {}, 'key': 'BSBN-FFT-SKDE', 'args': {'linear': False, 'use_fft': True}},
-    # '7.BSBN-FKDE-SBK-Linear': {'controller': {}, 'key': 'BSBN-FFT-SKDE-Linear', 'args': {'linear': True, 'use_fft': True}},
+    '2.B-SPBN-Simple': {'controller': {}, 'key': 'B-SPBN-Simple', 'args': {'linear': False, 'use_fft': False}},
+    '3.B-SPBN-Linear': {'controller': {}, 'key': 'B-SPBN-Linear', 'args': {'linear': True, 'use_fft': False}},
+    '4.B-SPBN-FKDE-Simple': {'controller': {}, 'key': 'B-SPBN-FFT-Simple', 'args': {'linear': False, 'use_fft': True}},
+    '5.B-SPBN-FKDE-Linear': {'controller': {}, 'key': 'B-SPBN-FFT-Linear', 'args': {'linear': True, 'use_fft': True}},
 }
 
 configex = ([[50,80,100,125]], [[1,2,3,4]], [[11,12,13,14]], ['sameDAG']) # M, simu_key, power, name
@@ -75,7 +73,7 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                         configcp = config.copy()
                         configcp['args']['grid'] = M
                         try:
-                            if "SPBN" in key:
+                            if key[2:] =="SPBN":
                                 config['controller'][M].prepare_dags(model_ref, model_ref)
                                 config['controller'][M].append(
                                 i, times={'train_new': -1, 'test_new': test_time_ref, 'train_ref': -1, 'test_ref': test_time_ref},
@@ -85,11 +83,9 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                             elif key[0] in ["4", "5"] and simu_key not in [3, 4]:
                                 config['controller'][M].append(i)
                                 continue
-                            elif key[0] in ["6", "7"]  and simu_key in [3, 4]:
-                                config['controller'][M].append(i)
-                                continue
+
                             
-                            model, test_time, logl  = ExperimentsController.get_bsbn_ref(simu_key, traindat, testdat, **configcp['args'])
+                            model, test_time, logl  = ExperimentsController.get_BSPBN_ref(simu_key, traindat, testdat, **configcp['args'])
                             config['controller'][M].prepare_dags(model, model_ref)
                             config['controller'][M].append(
                                 i, times={'train_new': -1, 'test_new': test_time, 'train_ref': -1, 'test_ref': test_time_ref},

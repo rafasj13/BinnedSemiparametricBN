@@ -1,6 +1,6 @@
-"","X1.SPBN","X2.BSBN","X3.BSBN.Linear","X4.BSBN.FKDE","X5.BSBN.FKDE.Linear"
-"X1.SPBN",NA,1,1,1,1
-"X2.BSBN",1,NA,1,1,1
-"X3.BSBN.Linear",1,1,NA,1,1
-"X4.BSBN.FKDE",1,1,1,NA,1
-"X5.BSBN.FKDE.Linear",1,1,1,1,NA
+"","B.SPBN.FKDE.Linear","B.SPBN.FKDE.Simple","B.SPBN.Linear","B.SPBN.Simple","SPBN"
+"B.SPBN.FKDE.Linear",NA,1,1,1,1
+"B.SPBN.FKDE.Simple",1,NA,1,1,1
+"B.SPBN.Linear",1,1,NA,1,1
+"B.SPBN.Simple",1,1,1,NA,1
+"SPBN",1,1,1,1,NA
