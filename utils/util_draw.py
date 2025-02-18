@@ -93,7 +93,7 @@ def draw_model(model, filename, save=False):
     DG.add_nodes_from(model.nodes())
     DG.add_edges_from(model.arcs())
     
-
+ 
     if isinstance(model, pbn.BayesianNetworkBase):
         for node in DG.nodes:
             if (model.node_type(node) == pbn.CKDEType()):
