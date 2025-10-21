@@ -8,12 +8,12 @@ from utils.util_metrics import *
 import json
 
 def get_nodes_and_parents(key): #return nodes and parents
-    if key == 1:
+    if key == 1 or key==5 or key==7:
         return ['A','B','C','D','E','F','G'], 3
     if key == 2:
         return ['A','B','C','D','E','F','G','H','I','J','K','L','M'], 5
         
-    elif key == 3:
+    elif key == 3 or key==6 or key==8:
         return ['A','B','C','D','E','F','G','H'], 1
     elif key == 4:
         return ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'], 1
@@ -33,7 +33,8 @@ controller_config = {
     '5.B-SPBN-FKDE-Linear': {'controller': {}, 'key': 'B-SPBN-FFT-Linear', 'args': {'linear': True, 'use_fft': True}},
 }
 
-configex = ([[50,80,100,125]], [[1,2,3,4]], [[11,12,13,14]], ['sameDAG']) # M, simu_key, power, name
+# configex = ([[10,25,50,80,125],[100]], [[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]], [[14],[11,12,13,14]], ['sameDAG','sameDAG'])
+configex = ([[10,25,50,80,125]], [[1,2,3,4,5,6,7,8]], [[14]], ['sameDAG'])
 for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
     for power in powers:
         for M in grids:
@@ -55,7 +56,7 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                 i = 0
                 while i < iters:
                     
-                    traindat, testdat, pool = controller_config['1.SPBN']['controller'][M].set_up(
+                    traindat, testdat = controller_config['1.SPBN']['controller'][M].set_up(
                         n, ntest, simulate={'bool': simu, 'key': simu_key}, seeds=(0, 255)
                     )
                     print(i, '->', traindat.shape, testdat.shape)
@@ -72,6 +73,7 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                     for nc,(key, config) in enumerate(controller_config.items()):
                         configcp = config.copy()
                         configcp['args']['grid'] = M
+                        
                         try:
                             if key[2:] =="SPBN":
                                 config['controller'][M].prepare_dags(model_ref, model_ref)
@@ -80,11 +82,10 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                                    logl={'new': logl_ref, 'ref': logl_ref}
                                 )
                                 continue
-                            elif key[0] in ["4", "5"] and simu_key not in [3, 4]:
+                            elif (key[0] in ["4", "5"] and simu_key in [2]) or (key[0] in ["4", "5"] and simu_key in [1,5,7] and M>25):
                                 config['controller'][M].append(i)
                                 continue
-
-                            
+                                             
                             model, test_time, logl  = ExperimentsController.get_BSPBN_ref(simu_key, traindat, testdat, **configcp['args'])
                             config['controller'][M].prepare_dags(model, model_ref)
                             config['controller'][M].append(
@@ -116,9 +117,8 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                 print(all_res)
 
                 
-                svpath = f'results/exp_simu2'
-                ndirs = len(os.listdir(svpath))+1
-                os.makedirs(svpath+f'/{ndirs}Mfix_{name}', exist_ok=True)
+                svpath = f'results/exp_simu/Mfix_{name}'
+                os.makedirs(svpath, exist_ok=True)
 
                 all_results = {key: config['controller'][M] for key,config in controller_config.items()}
                 with open(f'{svpath}/simu_all_{M}.json', 'w') as json_file:

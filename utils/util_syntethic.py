@@ -1,14 +1,16 @@
 import numpy as np  
 import pandas as pd
 import pybnesian as pbn
-
+from scipy import stats
 
 
 config_synthetic1 = dict(arcs = [('A', 'B'),('A', 'C'),('B', 'D'),('C', 'D'), ('C','E'), ('C', 'G'),
                                 ('D', 'E'),('D', 'F'),('E', 'F'),('A', 'F')],
 
     node_types = [('A', pbn.LinearGaussianCPDType()), ('B', pbn.LinearGaussianCPDType()), ('C', pbn.CKDEType()), ('D', pbn.CKDEType()),
-                  ('E', pbn.CKDEType()), ('F', pbn.CKDEType()), ('G', pbn.LinearGaussianCPDType())])
+                  ('E', pbn.CKDEType()), ('F', pbn.CKDEType()), ('G', pbn.LinearGaussianCPDType())],
+    node_types_nonormal= [('A', pbn.CKDEType()), ('B', pbn.CKDEType()), ('C', pbn.CKDEType()), ('D', pbn.CKDEType()),
+                  ('E', pbn.CKDEType()), ('F', pbn.CKDEType()), ('G', pbn.CKDEType())])
 
 
 config_synthetic2 = dict(
@@ -44,7 +46,9 @@ config_synthetic2 = dict(
 
 config_synthetic3 = dict(arcs = [('A', 'B'),('B', 'C'),('B', 'D'),('D', 'E'),('D', 'F'),('C', 'G'),('C', 'H')],
     node_types = [('A', pbn.CKDEType()), ('B', pbn.LinearGaussianCPDType()), ('C', pbn.LinearGaussianCPDType()), ('D', pbn.CKDEType()),
-                  ('E', pbn.CKDEType()), ('F', pbn.CKDEType()), ('G', pbn.LinearGaussianCPDType()), ('H', pbn.CKDEType())])
+                  ('E', pbn.CKDEType()), ('F', pbn.CKDEType()), ('G', pbn.LinearGaussianCPDType()), ('H', pbn.CKDEType())],
+    node_types_nonormal= [('A', pbn.CKDEType()), ('B', pbn.CKDEType()), ('C', pbn.CKDEType()), ('D', pbn.CKDEType()),
+                  ('E', pbn.CKDEType()), ('F', pbn.CKDEType()), ('G', pbn.CKDEType()), ('H', pbn.CKDEType())])
 
 config_synthetic4 = dict(
     arcs = [('A', 'B'),('A', 'C'),
@@ -62,6 +66,7 @@ config_synthetic4 = dict(
                ('G', pbn.CKDEType()), ('H', pbn.LinearGaussianCPDType()), ('I', pbn.CKDEType()), ('J', pbn.LinearGaussianCPDType()), 
                ('K', pbn.LinearGaussianCPDType()), ('L', pbn.CKDEType()),
             ('M', pbn.CKDEType()), ('N', pbn.CKDEType()), ('O', pbn.CKDEType())])
+
 
 
 def sample_mixture(prior_prob, means, variances, n_instances,):
@@ -191,6 +196,77 @@ def generate_synthetic4(size, seed=0):
 
 
 
+
+def generate_synthetic1_exponential(size, seed=0):
+    np.random.seed(seed)
+    
+    datarray = np.zeros(shape=(size, 7))
+    for row in range(size):
+        a = stats.expon.rvs(scale=1, size=1)[0]
+        b = stats.expon.rvs(scale=max(a, 1e-6), size=1)[0]
+        c = stats.expon.rvs(scale=max(2 * a, 1e-6), size=1)[0]
+        d = stats.expon.rvs(scale=max(b * c, 1e-6), size=1)[0]
+        e = stats.expon.rvs(scale=max(d * c, 1e-6), size=1)[0]
+        f = stats.expon.rvs(scale=max(a + 2 * d + e, 1e-6), size=1)[0]
+        g = stats.expon.rvs(scale=max(c, 1e-6), size=1)[0]
+        
+        datarray[row] = [a, b, c, d, e, f, g]
+    
+    return pd.DataFrame(datarray, columns=['A', 'B', 'C', 'D', 'E', 'F', 'G'])
+
+def generate_synthetic3_gamma(size, seed=0):
+    np.random.seed(seed)
+    
+    datarray = np.zeros(shape=(size, 8))
+    for row in range(size):
+        a = stats.gamma.rvs(a=2, scale=1, size=1)[0]
+        b = stats.gamma.rvs(a=max(a, 1e-6), scale=1, size=1)[0]
+        c = stats.gamma.rvs(a=max(b, 1e-6), scale=1, size=1)[0]
+        d = stats.gamma.rvs(a=max(b, 1e-6), scale=1, size=1)[0]
+        e = stats.gamma.rvs(a=max(d, 1e-6), scale=1, size=1)[0]
+        f = stats.gamma.rvs(a=max(d, 1e-6), scale=1, size=1)[0]
+        g = stats.gamma.rvs(a=max(c, 1e-6), scale=1, size=1)[0]
+        h = stats.gamma.rvs(a=max(c, 1e-6), scale=1, size=1)[0]
+        
+        datarray[row] = [a, b, c, d, e, f, g, h]
+    
+    return pd.DataFrame(datarray, columns=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
+
+def generate_synthetic1_beta(size, seed=0):
+    np.random.seed(seed)
+    
+    datarray = np.zeros(shape=(size, 7))
+    for row in range(size):
+        a = stats.beta.rvs(a=2, b=8, size=1)[0]
+        b = stats.beta.rvs(a=max(a, 1e-6), b=2, size=1)[0]
+        c = stats.beta.rvs(a=max(a, 1e-6), b=4, size=1)[0]
+        d = stats.beta.rvs(a=max(b, 1e-6), b=max(c, 1e-6), size=1)[0]
+        e = stats.beta.rvs(a=max(d, 1e-6), b=max(c, 1e-6), size=1)[0]
+        f = stats.beta.rvs(a=max(a + 2 * d, 1e-6), b=max(e, 1e-6), size=1)[0]
+        g = stats.beta.rvs(a=1, b=max(c, 1e-6), size=1)[0]
+        
+        datarray[row] = [a, b, c, d, e, f, g]
+    
+    return pd.DataFrame(datarray, columns=['A', 'B', 'C', 'D', 'E', 'F', 'G'])
+
+def generate_synthetic3_Laplace(size, seed=0):
+    np.random.seed(seed)
+    datarray = np.zeros(shape=(size, 8))
+    for row in range(size):
+        a = stats.laplace.rvs(loc=5, scale=2, size=1)[0]
+        b = stats.laplace.rvs(loc=a, scale=2, size=1)[0]
+        c = stats.laplace.rvs(loc=b, scale=2, size=1)[0]
+        d = stats.laplace.rvs(loc=b, scale=2, size=1)[0]
+        e = stats.laplace.rvs(loc=d, scale=2, size=1)[0]
+        f = stats.laplace.rvs(loc=d, scale=2, size=1)[0]
+        g = stats.laplace.rvs(loc=c, scale=2, size=1)[0]
+        h = stats.laplace.rvs(loc=c, scale=2, size=1)[0]
+        datarray[row] = [a, b, c, d, e, f, g, h]
+    return pd.DataFrame(datarray, columns=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
+
+
+
+
 def generate_data(key, size, seed):
     if key==1:
         return generate_synthetic1(size, seed)
@@ -200,17 +276,41 @@ def generate_data(key, size, seed):
         return generate_synthetic3(size, seed)
     elif key==4:
         return generate_synthetic4(size, seed)
+    elif key==5:
+        return generate_synthetic1_exponential(size, seed)
+    elif key==6:
+        return generate_synthetic3_gamma(size, seed)
+    elif key==7:
+        return generate_synthetic1_beta(size, seed)
+    elif key==8:
+        return generate_synthetic3_Laplace(size, seed)
     else:
         print('Not valid key')
 
 def get_config(key):
     if key==1:
-        return config_synthetic1
+        config = config_synthetic1.copy()
+        config.pop("node_types_nonormal")
+        return config
     elif key==2:
-        return config_synthetic2
+        config = config_synthetic2.copy()
+        return config
     elif key==3:
-        return config_synthetic3
+        config = config_synthetic3.copy()
+        config.pop("node_types_nonormal")
+        return config
     elif key==4:
-        return config_synthetic4
+        config = config_synthetic4.copy()
+        return config
+    elif key==5 or key==7:
+        config = config_synthetic1.copy()
+        config['node_types']=config['node_types_nonormal']
+        config.pop("node_types_nonormal")
+        return config
+    elif key==6 or key==8:
+        config = config_synthetic3.copy()
+        config['node_types']=config['node_types_nonormal']
+        config.pop("node_types_nonormal")
+        return config
     else:
         print('Not valid key')

@@ -30,9 +30,9 @@ controller_config = {
 
 modelkey = '1.SPBN'
 parents = None
-datasets  = sorted(glob.glob('data/public_datasets/both_ready/*.csv')) 
+datasets  = sorted(glob.glob('public_datasets/uci_ready/*.csv'))[-2:] 
 print(datasets)
-configex = ([[50,100]], [datasets], [[14]], ['reals_no_pa']) # M, datasets, power, name
+configex = ([[50,100]], [datasets], [[14]], ['reals_nopa_78']) # M, datasets, power, name
 for (grids, paths, powers, name) in zip(*configex):
     for power in powers:
         for M in grids:
@@ -63,7 +63,7 @@ for (grids, paths, powers, name) in zip(*configex):
                 while i < iters:
         
                     traindat, testdat = controller_config[modelkey]['controller'][M].set_up(
-                        n, ntest, simulate={'bool': False}, seeds=(1, 255)
+                        n, ntest, simulate={'bool': False}, seeds=(2, 256)
                     )
                     print(i, '->', traindat.shape, testdat.shape)
                     
@@ -131,9 +131,8 @@ for (grids, paths, powers, name) in zip(*configex):
                 print(all_res)
 
                 
-                svpath = f'results/exp_real/Mfix'
-                ndirs = len(os.listdir(svpath))+1
-                os.makedirs(svpath+f'/{ndirs}try_{name}', exist_ok=True)
+                svpath = f'results/exp_real/Mfix/try_{name}'
+                os.makedirs(svpath, exist_ok=True)
 
                 all_results = {key: config['controller'][M] for key,config in controller_config.items()}
                 with open(f'{svpath}/simu_all_{M}.json', 'w') as json_file:

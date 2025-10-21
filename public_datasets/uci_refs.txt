@@ -54,3 +54,21 @@ doi = {https://doi.org/10.1016/j.snb.2023.134036},
 url = {https://www.sciencedirect.com/science/article/pii/S0925400523007517},
 author = {Daniel Marín and Joshua Llano-Viles and Zouhair Haddi and Alexandre Perera-Lluna and Jordi Fonollosa},
 }
+
+6 Gas turbine CO and NOx emission data set
+@misc{6_gas_turbine,
+  author       = {Kaya, Heysem and Pınar Tüfekci and Erdinç Uzun},
+  title        = {{Gas turbine CO and NOx emission data set}},
+  year         = {2019},
+  howpublished = {UCI Machine Learning Repository},
+  note         = {{https://doi.org/10.24432/C5WC95}}
+}
+
+7 Gas sensor array under dynamic gas mixtures
+@misc{7_ethylene_co,
+  author       = {Fonollosa, Jordi},
+  title        = {{Gas sensor array under dynamic gas mixtures}},
+  year         = {2015},
+  howpublished = {UCI Machine Learning Repository},
+  note         = {{https://doi.org/10.24432/C5WP4C}}
+}

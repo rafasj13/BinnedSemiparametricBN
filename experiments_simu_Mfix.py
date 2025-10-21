@@ -8,12 +8,12 @@ from utils.util_metrics import *
 import json
 
 def get_nodes_and_parents(key): #return nodes and parents
-    if key == 1:
+    if key == 1 or key==5 or key==7:
         return ['A','B','C','D','E','F','G'], 3
     if key == 2:
         return ['A','B','C','D','E','F','G','H','I','J','K','L','M'], 5
         
-    elif key == 3:
+    elif key == 3 or key==6 or key==8:
         return ['A','B','C','D','E','F','G','H'], 1
     elif key == 4:
         return ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'], 1
@@ -36,7 +36,7 @@ controller_config = {
 
 modelkey = '1.SPBN'
 
-configex = ([[50,80,100, 125]], [[1,2,3,4]], [[11,12,13,14]], ['try1']) # M, simu_key, power, name
+configex = ([[50,80,125],[100]], [[5,7,6,8],[5,7,6,8]], [[14],[11,12,13,14]], ['nonormal','nonormal']) # M, simu_key, power, name
 for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
     for power in powers:
         for M in grids:
@@ -58,9 +58,10 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                 i = 0
                 while i < iters:
                     
-                    traindat, testdat, pool = controller_config[modelkey]['controller'][M].set_up(
-                        n, ntest, simulate={'bool': simu, 'key': simu_key}, seeds=(0, 255)
+                    traindat, testdat = controller_config[modelkey]['controller'][M].set_up(
+                        n, ntest, simulate={'bool': simu, 'key': simu_key}, seeds=(1, 256)
                     )
+                    pool = pbn.OperatorPool([pbn.ArcOperatorSet(), pbn.ChangeNodeTypeSet()])
                     print(i, '->', traindat.shape, testdat.shape)
 
                     # Reference model
@@ -78,7 +79,7 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                             configcp['args']['grid'] = M
                             if key[2:] =="SPBN":
                                 vl = pbn.ValidatedLikelihood(traindat, k=kcv)
-                            elif key[0] in ["4", "5"] and simu_key not in [3, 4]:
+                            elif (key[0] in ["4", "5"] and simu_key in [2]) or (key[0] in ["4", "5"] and simu_key in [1,5,7] and M>25):
                                     config['controller'][M].append(i)
                                     continue
                             else:
@@ -116,9 +117,8 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                 print(all_res)
 
                 
-                svpath = f'results/exp_simu'
-                ndirs = len(os.listdir(svpath))+1
-                os.makedirs(svpath+f'/{ndirs}Mfix_{name}', exist_ok=True)
+                svpath = f'results/exp_simu/Mfix_{name}'
+                os.makedirs(svpath, exist_ok=True)
 
                 all_results = {key: config['controller'][M] for key,config in controller_config.items()}
                 with open(f'{svpath}/simu_all_{M}.json', 'w') as json_file:

@@ -1,0 +1,28 @@
+Dataset,Model,M,HC Ratio,Test Ratio
+1,B-SPBN-FKDE-Simple,50,-1981.56 $\pm$ 410.86,-7.70e+00 $\pm$ 0.9
+1,B-SPBN-FKDE-Simple,100,-1852.02 $\pm$ 283.73,-6.76e+00 $\pm$ 0.11
+1,B-SPBN-Simple,50,1.19 $\pm$ 0.28,1.72e+00 $\pm$ 0.16
+1,B-SPBN-Simple,100,1.1 $\pm$ 0.17,1.40e+00 $\pm$ 0.09
+2,B-SPBN-FKDE-Simple,50,-356.04 $\pm$ 43.01,-3.14e+00 $\pm$ 0.18
+2,B-SPBN-FKDE-Simple,100,-283.75 $\pm$ 9.18,-2.61e+00 $\pm$ 0.08
+2,B-SPBN-Simple,50,1.92 $\pm$ 0.23,9.65e+00 $\pm$ 1.02
+2,B-SPBN-Simple,100,1.45 $\pm$ 0.05,3.49e+00 $\pm$ 0.15
+3,B-SPBN-FKDE-Simple,50,-255.57 $\pm$ 14.56,-2.78e+00 $\pm$ 0.31
+3,B-SPBN-FKDE-Simple,100,-193.33 $\pm$ 11.84,-2.71e+00 $\pm$ 0.34
+3,B-SPBN-Simple,50,2.08 $\pm$ 0.12,1.41e+01 $\pm$ 2.14
+3,B-SPBN-Simple,100,1.76 $\pm$ 0.18,9.83e+00 $\pm$ 4.47
+4,B-SPBN-FKDE-Simple,50,-769.83 $\pm$ 89.79,-5.02e+00 $\pm$ 0.46
+4,B-SPBN-FKDE-Simple,100,-555.61 $\pm$ 43.15,-3.98e+00 $\pm$ 0.45
+4,B-SPBN-Simple,50,1.39 $\pm$ 0.18,2.33e+00 $\pm$ 1.34
+4,B-SPBN-Simple,100,1.07 $\pm$ 0.28,1.25e+00 $\pm$ 0.24
+5,B-SPBN-FKDE-Simple,50,-21778.73 $\pm$ 3259.83,-2.52e+01 $\pm$ 1.68
+5,B-SPBN-FKDE-Simple,100,-21494.89 $\pm$ 1869.88,-2.45e+01 $\pm$ 0.41
+5,B-SPBN-Simple,50,1.07 $\pm$ 0.16,1.68e+00 $\pm$ 0.04
+5,B-SPBN-Simple,100,1.09 $\pm$ 0.1,1.44e+00 $\pm$ 0.06
+
+
+7,B-SPBN-Simple,50,1.2 $\pm$ 0.14,1.30e+00 $\pm$ 0.21
+7,B-SPBN-FKDE-Simple,50,-2945.85 $\pm$ 360.06,-9.61e+00 $\pm$ 1.42
+
+8,B-SPBN-Simple,50,2.53 $\pm$ 0.14,3.37e+00 $\pm$ 0.52
+8,B-SPBN-FKDE-Simple,50,-8032.79 $\pm$ 961.78,-1.64e+01 $\pm$ 1.89
