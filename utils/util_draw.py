@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 import os
 
 
-import pyAgrum as gum
-import pyAgrum.lib.notebook as gnb
+import pyagrum as gum
+import pyagrum.lib.notebook as gnb
 import pydot as dot
 
-import pyAgrum.lib.bn2graph as ggr
-import  pyAgrum.lib.utils as gutils
+import pyagrum.lib.bn2graph as ggr
+import  pyagrum.lib.utils as gutils
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPDF
 

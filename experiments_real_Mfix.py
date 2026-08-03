@@ -29,11 +29,10 @@ controller_config = {
 }
 
 modelkey = '1.SPBN'
-parents = None
-datasets  = sorted(glob.glob('public_datasets/uci_ready/*.csv'))[-2:] 
+datasets  = sorted(glob.glob('public_datasets/uci_ready/*.csv'))
 print(datasets)
-configex = ([[50,100]], [datasets], [[14]], ['reals_nopa_78']) # M, datasets, power, name
-for (grids, paths, powers, name) in zip(*configex):
+configex = ([[50,100],[50,100]], [datasets, datasets], [[14],[14]], ['_reals_no_pa','_reals_1pa'], [None, 1]) # M, datasets, power, namec, parents
+for (grids, paths, powers, name, parents) in zip(*configex):
     for power in powers:
         for M in grids:
             n = 2**power
@@ -43,8 +42,6 @@ for (grids, paths, powers, name) in zip(*configex):
                 basename = os.path.basename(path)
                 data = pd.read_csv(path)
                 nodes = list(data.columns)
-                if npt > 4:
-                    continue
 
                 if parents:
                     hc_config = {'max_indegree':parents}
@@ -131,7 +128,7 @@ for (grids, paths, powers, name) in zip(*configex):
                 print(all_res)
 
                 
-                svpath = f'results/exp_real/Mfix/try_{name}'
+                svpath = f'results/exp_real/Mfix/try{name}'
                 os.makedirs(svpath, exist_ok=True)
 
                 all_results = {key: config['controller'][M] for key,config in controller_config.items()}

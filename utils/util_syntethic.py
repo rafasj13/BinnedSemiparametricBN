@@ -68,6 +68,22 @@ config_synthetic4 = dict(
             ('M', pbn.CKDEType()), ('N', pbn.CKDEType()), ('O', pbn.CKDEType())])
 
 
+def apply_noise(data, noise_level):
+    """
+    Añade ruido gaussiano a los conjuntos de train y test basándose 
+    exclusivamente en la desviación estándar del train set.
+    """
+
+    df_noisy = data.copy()
+    data_std = df_noisy.std()
+    
+    for col in df_noisy.columns:
+        sigma = data_std[col]
+        noise = np.random.normal(loc=0.0, scale=noise_level * sigma, size=len(df_noisy))
+        df_noisy[col] += noise
+        
+    return df_noisy
+
 
 def sample_mixture(prior_prob, means, variances, n_instances,):
 

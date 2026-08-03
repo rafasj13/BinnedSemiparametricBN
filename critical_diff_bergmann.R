@@ -3,7 +3,7 @@ library(scmamp)
 
 
 
-data <- read.csv("data/real_no_pa/slogl.csv",  header=TRUE)
+data <- read.csv("critical_diff/real_no_pa_with78/slogl.csv",  header=TRUE)
 data
 
 test.res <- postHocTest(data = data, test = 'friedman', correct = 'bergmann')
@@ -18,7 +18,7 @@ drawAlgorithmGraph(pvalue.matrix = test.res$corrected.pval, mean.value = average
 test.res.df <- as.data.frame(test.res$corrected.pval)
 avg.ranking.df <- as.data.frame(average.ranking)
 avg.ranking.df
-write.csv(test.res.df, file = "result/real_no_pa/slogl_bergmann_hommel.csv", row.names = TRUE)
-write.csv(avg.ranking.df, file = "result/real_no_pa/slogl_avg_ranking.csv", row.names = TRUE)
+write.csv(test.res.df, file = "critical_diff/real_no_pa_with78/slogl_bergmann_hommel.csv", row.names = TRUE)
+write.csv(avg.ranking.df, file = "critical_diff/real_no_pa_with78/slogl_avg_ranking.csv", row.names = TRUE)
 
 

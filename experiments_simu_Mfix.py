@@ -36,7 +36,8 @@ controller_config = {
 
 modelkey = '1.SPBN'
 
-configex = ([[50,80,125],[100]], [[5,7,6,8],[5,7,6,8]], [[14],[11,12,13,14]], ['nonormal','nonormal']) # M, simu_key, power, name
+configex = ([[50,80,125],[100]], [[5,7,6,8],[5,7,6,8]], [[14],[11,12,13,14]], ['_nonormal','_nonormal']) # M, simu_key, power, name
+configex = ([[50,80,125],[100]], [[1,2,3,4],[1,2,3,4]], [[14],[11,12,13,14]], ['','']) # M, simu_key, power, name
 for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
     for power in powers:
         for M in grids:
@@ -117,7 +118,7 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                 print(all_res)
 
                 
-                svpath = f'results/exp_simu/Mfix_{name}'
+                svpath = f'results/exp_simu/Mfix{name}'
                 os.makedirs(svpath, exist_ok=True)
 
                 all_results = {key: config['controller'][M] for key,config in controller_config.items()}

@@ -1,1 +1,14 @@
-data/
+utils/__pycache__/
+public_datasets/uci_repos/
+public_datasets/uci_ready/
+public_datasets/nasa_repos/
+public_datasets/both_ready/
+public_datasets/nasa_refs.txt
+manage_nasa.ipynb
+README_BSBN.md
+utils/ai_plotting.py
+pruebas.ipynb
+.Rproj.user
+.Rhistory
+.RData
+BinnedSemiparametricBN.Rproj

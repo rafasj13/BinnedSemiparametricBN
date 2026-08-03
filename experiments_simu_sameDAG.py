@@ -33,8 +33,7 @@ controller_config = {
     '5.B-SPBN-FKDE-Linear': {'controller': {}, 'key': 'B-SPBN-FFT-Linear', 'args': {'linear': True, 'use_fft': True}},
 }
 
-# configex = ([[10,25,50,80,125],[100]], [[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]], [[14],[11,12,13,14]], ['sameDAG','sameDAG'])
-configex = ([[10,25,50,80,125]], [[1,2,3,4,5,6,7,8]], [[14]], ['sameDAG'])
+configex = ([[10,25,50,80,125],[100]], [[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]], [[14],[11,12,13,14]], ['_sameDAG','_sameDAG'])
 for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
     for power in powers:
         for M in grids:
@@ -117,7 +116,7 @@ for kexp, (grids, simulations, powers, name) in enumerate(zip(*configex)):
                 print(all_res)
 
                 
-                svpath = f'results/exp_simu/Mfix_{name}'
+                svpath = f'results/exp_simu/Mfix{name}'
                 os.makedirs(svpath, exist_ok=True)
 
                 all_results = {key: config['controller'][M] for key,config in controller_config.items()}
